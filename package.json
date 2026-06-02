@@ -1,0 +1,15 @@
+{
+  "name": "faxx-imperial-universe",
+  "version": "2.0.0",
+  "description": "FAXX IMPERIAL — Universe Made On Earth. Anti-corporate AI command center.",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@vercel/node": "^3.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  }
+}
