@@ -228,7 +228,7 @@ async function connectYouTube() {
 
   try {
     // Use our proxy (key is hidden in backend .env, but frontend can optionally send one for testing)
-    const res = await fetch(`/api/youtube?channelId=${encodeURIComponent(ch)}`);
+    const res = await fetch(`https://faxx.up.railway.app/api/youtube?channelId=${encodeURIComponent(ch)}`);
     const data = await res.json();
 
     if (data.error) {
