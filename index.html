@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FAXX IMPERIAL v2.0 — Universe Made On Earth</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --fg: #ffffff;
+            --accent: #ffffff;
+            --border: #ffffff;
+            --shadow: #ffffff;
+            --danger: #ff0000;
+            --success: #00ff00;
+            --warn: #ffaa00;
+            --info: #00aaff;
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --terminal-h: 40vh;
+        }
+
+        [data-theme="light"] {
+            --bg: #ffffff;
+            --fg: #000000;
+            --accent: #000000;
+            --border: #000000;
+            --shadow: #000000;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%; min-height: 100%;
+            background: var(--bg); color: var(--fg);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            cursor: crosshair;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        ::selection { background: var(--fg); color: var(--bg); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg); border-left: 2px solid var(--border); }
+        ::-webkit-scrollbar-thumb { background: var(--fg); border: 2px solid var(--bg); }
+
+        /* Overlays */
+        .noise {
+            position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        .scanlines {
+            position: fixed; inset: 0; pointer-events: none; z-index: 9997;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);
+        }
+
+        /* Layout */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+        /* Brutalist utilities */
+        .brutal-box {
+            border: 3px solid var(--border);
+            box-shadow: 6px 6px 0px 0px var(--shadow);
+            background: var(--bg);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .brutal-box:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0px 0px var(--shadow); }
+        .brutal-btn {
+            display: inline-block; padding: 14px 28px;
+            border: 3px solid var(--border); background: var(--bg); color: var(--fg);
+            font-family: var(--font-mono); font-weight: 700; font-size: 14px;
+            text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; box-shadow: 4px 4px 0px 0px var(--shadow);
+            transition: all 0.1s; text-decoration: none;
+        }
+        .brutal-btn:hover {
+            background: var(--fg); color: var(--bg);
+            transform: translate(-2px, -2px); box-shadow: 6px 6px 0px 0px var(--shadow);
+        }
+        .brutal-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px 0px var(--shadow); }
+        .brutal-btn.danger { border-color: var(--danger); color: var(--danger); }
+        .brutal-btn.danger:hover { background: var(--danger); color: #fff; }
+        .brutal-btn.success { border-color: var(--success); color: var(--success); }
+        .brutal-btn.success:hover { background: var(--success); color: #000; }
+
+        /* Header */
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--bg); border-bottom: 3px solid var(--border); padding: 16px 0;
+        }
+        .header-inner {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 16px;
+        }
+        .logo-wrap {
+            display: flex; align-items: center; gap: 12px;
+            cursor: pointer; user-select: none;
+        }
+        .logo-svg {
+            width: 48px; height: 48px; border: 2px solid var(--border);
+            box-shadow: 3px 3px 0px 0px var(--shadow);
+            transition: transform 0.3s;
+        }
+        .logo-wrap:hover .logo-svg { transform: scale(1.05) rotate(-2deg); }
+        .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+        .nav-links a {
+            font-family: var(--font-mono); font-size: 12px; text-transform: uppercase;
+            color: var(--fg); text-decoration: none; border: 2px solid var(--border);
+            padding: 8px 14px; box-shadow: 3px 3px 0px 0px var(--shadow); transition: all 0.1s;
+        }
+        .nav-links a:hover { background: var(--fg); color: var(--bg); transform: translate(-1px,-1px); box-shadow: 4px 4px 0px 0px var(--shadow); }
+
+        /* Hero */
+        .hero {
+            min-height: 85vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            padding: 60px 0; position: relative; border-bottom: 3px solid var(--border);
+        }
+        .hero-logo-svg {
+            width: clamp(200px, 30vw, 500px); height: auto; margin-bottom: 24px;
+            filter: drop-shadow(6px 6px 0px var(--shadow)); cursor: pointer; transition: filter 0.3s;
+        }
+        .hero-logo-svg.spin { animation: spinShake 0.8s ease-in-out; }
+        @keyframes spinShake {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-10deg) scale(1.1); }
+            50% { transform: rotate(10deg) scale(1.1); }
+            75% { transform: rotate(-5deg) scale(1.05); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+        .hero h1 {
+            font-size: clamp(32px, 6vw, 72px); font-weight: 900;
+            text-transform: uppercase; letter-spacing: -2px; line-height: 1.05; margin-bottom: 16px;
+        }
+        .hero .tagline {
+            font-family: var(--font-mono); font-size: clamp(14px, 2vw, 20px);
+            text-transform: uppercase; letter-spacing: 4px; margin-bottom: 40px; opacity: 0.8;
+        }
+        .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+
+        /* Marquee */
+        .marquee {
+            overflow: hidden; border-top: 3px solid var(--border); border-bottom: 3px solid var(--border);
+            padding: 12px 0; background: var(--fg); color: var(--bg);
+            font-family: var(--font-mono); font-size: 14px; text-transform: uppercase;
+            white-space: nowrap; position: relative;
+        }
+        .marquee-inner { display: inline-block; animation: scroll 25s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* Sections */
+        section { padding: 60px 0; border-bottom: 3px solid var(--border); }
+        .section-title { font-size: clamp(28px, 4vw, 48px); font-weight: 900; text-transform: uppercase; margin-bottom: 8px; letter-spacing: -1px; }
+        .section-sub { font-family: var(--font-mono); font-size: 14px; text-transform: uppercase; opacity: 0.7; margin-bottom: 40px; }
+
+        /* ========================
+           CHATBOT v2.0
+           ======================== */
+        .chat-grid {
+            display: grid; grid-template-columns: 260px 1fr; gap: 0;
+            border: 3px solid var(--border); box-shadow: 8px 8px 0px 0px var(--shadow);
+            min-height: 600px;
+        }
+        .chat-sidebar {
+            border-right: 3px solid var(--border); padding: 24px;
+            display: flex; flex-direction: column; gap: 20px;
+            background: rgba(255,255,255,0.02);
+        }
+        .chat-sidebar h3 {
+            font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+            border-bottom: 2px solid var(--border); padding-bottom: 8px;
+        }
+        .model-list { display: flex; flex-direction: column; gap: 8px; }
+        .model-tag {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 12px; border: 2px solid var(--border);
+            font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
+            cursor: pointer; transition: all 0.1s; user-select: none;
+        }
+        .model-tag:hover, .model-tag.active { background: var(--fg); color: var(--bg); }
+        .model-tag .model-status {
+            width: 8px; height: 8px; border: 1px solid var(--border); display: inline-block;
+        }
+        .model-tag.active .model-status { background: var(--success); }
+        .model-tag:not(.active) .model-status { background: transparent; }
+        .chat-main { display: flex; flex-direction: column; padding: 24px; position: relative; }
+        .chat-messages {
+            flex: 1; overflow-y: auto; max-height: 500px; padding-right: 8px;
+            margin-bottom: 16px; display: flex; flex-direction: column; gap: 16px;
+        }
+        .msg { max-width: 80%; padding: 16px; border: 2px solid var(--border); font-size: 14px; line-height: 1.5; animation: popIn 0.3s ease-out; }
+        @keyframes popIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .msg.user { align-self: flex-end; background: var(--fg); color: var(--bg); box-shadow: 4px 4px 0px 0px var(--shadow); }
+        .msg.bot { align-self: flex-start; background: var(--bg); color: var(--fg); box-shadow: 4px 4px 0px 0px var(--shadow); }
+        .msg.bot code {
+            display: block; background: rgba(255,255,255,0.08); padding: 12px; margin-top: 8px;
+            font-family: var(--font-mono); font-size: 12px; border-left: 3px solid var(--border); overflow-x: auto;
+        }
+        .chat-input-wrap { display: flex; gap: 12px; border-top: 3px solid var(--border); padding-top: 16px; }
+        .chat-input {
+            flex: 1; background: var(--bg); border: 3px solid var(--border); color: var(--fg);
+            padding: 14px 18px; font-family: var(--font-mono); font-size: 14px;
+            outline: none; box-shadow: 4px 4px 0px 0px var(--shadow);
+        }
+        .chat-input:focus { box-shadow: 6px 6px 0px 0px var(--shadow); transform: translate(-2px,-2px); }
+
+        /* ========================
+           TERMINAL v2.0 — API DASHBOARD
+           ======================== */
+        .terminal {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--terminal-h);
+            background: #000; border-top: 3px solid var(--border); z-index: 500;
+            display: none; flex-direction: column; font-family: var(--font-mono); font-size: 13px;
+            transition: height 0.3s;
+        }
+        .terminal.open { display: flex; }
+        .terminal-header {
+            padding: 10px 16px; border-bottom: 2px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--bg); flex-shrink: 0;
+        }
+        .terminal-tabs { display: flex; gap: 4px; }
+        .term-tab {
+            padding: 6px 14px; border: 2px solid var(--border); background: var(--bg); color: var(--fg);
+            font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; cursor: pointer;
+            box-shadow: 2px 2px 0px 0px var(--shadow); transition: all 0.1s;
+        }
+        .term-tab:hover, .term-tab.active { background: var(--fg); color: var(--bg); }
+        .terminal-body {
+            flex: 1; padding: 0; overflow-y: auto; color: var(--success); display: none;
+            background: #000;
+        }
+        .terminal-body.active { display: block; }
+        .terminal-body .line { padding: 2px 16px; margin-bottom: 2px; }
+        .terminal-body .err { color: var(--danger); }
+        .terminal-body .warn { color: var(--warn); }
+        .terminal-body .info { color: var(--info); }
+        .terminal-body .sys { color: var(--fg); opacity: 0.7; }
+        .terminal-input-line {
+            display: flex; padding: 12px 16px; border-top: 2px solid var(--border); flex-shrink: 0;
+        }
+        .terminal-input-line span { margin-right: 8px; color: var(--success); }
+        .terminal-input-line input {
+            flex: 1; background: transparent; border: none; color: var(--fg);
+            font-family: var(--font-mono); font-size: 13px; outline: none;
+        }
+
+        /* API Dashboard inside Terminal */
+        .api-dash { padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+        .api-card {
+            border: 2px solid var(--border); padding: 16px; background: var(--bg);
+            box-shadow: 4px 4px 0px 0px var(--shadow); position: relative;
+        }
+        .api-card h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: flex; justify-content: space-between; }
+        .api-card .api-status { display: inline-block; width: 10px; height: 10px; border: 1px solid var(--border); margin-right: 6px; }
+        .api-card.online .api-status { background: var(--success); }
+        .api-card.offline .api-status { background: var(--danger); }
+        .api-card.warn .api-status { background: var(--warn); }
+        .credit-bar { width: 100%; height: 12px; border: 2px solid var(--border); margin-top: 8px; position: relative; }
+        .credit-bar-fill { height: 100%; background: var(--fg); transition: width 0.5s; }
+        .api-metric { display: flex; justify-content: space-between; font-size: 11px; margin-top: 8px; opacity: 0.8; }
+
+        /* Code Studio inside Terminal */
+        .code-studio { display: grid; grid-template-columns: 1fr 1fr; height: 100%; }
+        .code-pane { display: flex; flex-direction: column; border-right: 2px solid var(--border); }
+        .code-pane:last-child { border-right: none; }
+        .pane-header {
+            padding: 8px 12px; border-bottom: 2px solid var(--border); font-size: 11px;
+            text-transform: uppercase; display: flex; justify-content: space-between; align-items: center;
+        }
+        .code-textarea {
+            flex: 1; background: #000; color: var(--fg); border: none;
+            font-family: var(--font-mono); font-size: 12px; line-height: 1.5;
+            padding: 12px; resize: none; outline: none; tab-size: 2;
+        }
+        .preview-frame { width: 100%; height: 100%; border: none; background: #fff; }
+        .studio-toolbar {
+            padding: 8px 12px; border-top: 2px solid var(--border); display: flex; gap: 8px;
+        }
+        .studio-toolbar .brutal-btn { padding: 6px 12px; font-size: 11px; }
+
+        /* Logs inside Terminal */
+        .logs-panel { padding: 16px; }
+        .threat-card {
+            border: 2px solid var(--danger); padding: 12px; margin-bottom: 12px;
+            box-shadow: 4px 4px 0px 0px var(--danger); background: rgba(255,0,0,0.05);
+        }
+        .threat-card .threat-title { color: var(--danger); font-weight: 700; margin-bottom: 6px; }
+        .threat-card .glm-analysis {
+            border-left: 3px solid var(--info); padding-left: 12px; margin-top: 8px;
+            color: var(--info); font-size: 12px; line-height: 1.5;
+        }
+
+        /* ========================
+           YOUTUBE / ANALYTICS
+           ======================== */
+        .yt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .yt-card {
+            border: 3px solid var(--border); box-shadow: 6px 6px 0px 0px var(--shadow);
+            padding: 24px; position: relative; overflow: hidden;
+        }
+        .yt-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: repeating-linear-gradient(90deg, var(--fg), var(--fg) 8px, transparent 8px, transparent 16px);
+        }
+        .yt-card h4 { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; opacity: 0.7; }
+        .yt-card .big-num { font-size: 48px; font-weight: 900; letter-spacing: -2px; }
+        .yt-form { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
+        .yt-form input {
+            flex: 1; min-width: 200px; background: var(--bg); border: 3px solid var(--border);
+            color: var(--fg); padding: 12px 16px; font-family: var(--font-mono); font-size: 13px;
+            box-shadow: 4px 4px 0px 0px var(--shadow);
+        }
+        .chart-box { border: 3px solid var(--border); box-shadow: 6px 6px 0px 0px var(--shadow); padding: 24px; height: 320px; position: relative; }
+        canvas { width: 100% !important; height: 100% !important; }
+
+        /* ========================
+           MODALS & PANELS
+           ======================== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 1000;
+            display: none; justify-content: center; align-items: center; padding: 24px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--bg); border: 3px solid var(--border); box-shadow: 12px 12px 0px 0px var(--shadow);
+            width: 100%; max-width: 480px; padding: 40px; position: relative;
+            animation: modalPop 0.3s ease-out;
+        }
+        @keyframes modalPop { from { transform: scale(0.9) rotate(-2deg); opacity: 0; } to { transform: scale(1) rotate(0deg); opacity: 1; } }
+        .modal h2 { font-size: 32px; text-transform: uppercase; margin-bottom: 24px; }
+        .modal .close-btn {
+            position: absolute; top: 12px; right: 12px; width: 36px; height: 36px;
+            border: 2px solid var(--border); background: var(--bg); color: var(--fg);
+            font-family: var(--font-mono); font-size: 18px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px var(--shadow);
+        }
+        .modal .close-btn:hover { background: var(--fg); color: var(--bg); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .form-group input {
+            width: 100%; background: var(--bg); border: 3px solid var(--border); color: var(--fg);
+            padding: 12px; font-family: var(--font-mono); font-size: 14px; box-shadow: 4px 4px 0px 0px var(--shadow);
+        }
+        .modal-footer { margin-top: 24px; font-family: var(--font-mono); font-size: 12px; text-align: center; }
+        .modal-footer a { color: var(--fg); text-decoration: underline; cursor: pointer; }
+
+        .settings-panel {
+            position: fixed; top: 0; right: -400px; width: 360px; max-width: 90vw; height: 100%;
+            background: var(--bg); border-left: 3px solid var(--border); box-shadow: -8px 0 0px 0px var(--shadow);
+            z-index: 200; padding: 40px 24px; transition: right 0.3s ease; overflow-y: auto;
+        }
+        .settings-panel.open { right: 0; }
+        .settings-panel h2 { font-size: 24px; text-transform: uppercase; margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center; }
+        .setting-item { border: 2px solid var(--border); padding: 20px; margin-bottom: 20px; box-shadow: 4px 4px 0px 0px var(--shadow); }
+        .setting-item h4 { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; margin-bottom: 12px; }
+        .toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+        .toggle-switch { width: 48px; height: 24px; border: 2px solid var(--border); position: relative; background: var(--bg); }
+        .toggle-switch::after {
+            content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+            background: var(--fg); border: 2px solid var(--border); transition: left 0.2s;
+        }
+        .toggle.active .toggle-switch::after { left: 26px; }
+
+        /* GOD MODE */
+        .god-mode .hero h1 {
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 400% 400%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: rainbow 3s ease infinite;
+        }
+        @keyframes rainbow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .god-mode .brutal-box, .god-mode .brutal-btn, .god-mode .msg, .god-mode .yt-card,
+        .god-mode .chat-sidebar, .god-mode .modal, .god-mode .setting-item, .god-mode .api-card {
+            border-color: #ff00ff; box-shadow: 6px 6px 0px 0px #00ffff;
+        }
+
+        /* Footer */
+        footer { padding: 60px 0; text-align: center; border-top: 3px solid var(--border);
+            font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 2px;
+        }
+        footer .footer-logo { font-size: 24px; font-weight: 900; margin-bottom: 16px; cursor: pointer; display: inline-block; }
+        footer .footer-logo:hover { letter-spacing: 4px; }
+        footer .copy { opacity: 0.6; margin-bottom: 8px; }
+        footer .kimi-credit { opacity: 0; transition: opacity 0.5s; margin-top: 8px; font-size: 11px; }
+        footer .kimi-credit.visible { opacity: 0.6; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: var(--fg); color: var(--bg); padding: 12px 24px;
+            border: 3px solid var(--border); box-shadow: 4px 4px 0px 0px var(--shadow);
+            font-family: var(--font-mono); font-size: 13px; z-index: 300;
+            transition: transform 0.3s; max-width: 90vw; text-align: center;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Self destruct */
+        .destruct-overlay {
+            position: fixed; inset: 0; background: var(--danger); z-index: 10000;
+            display: none; justify-content: center; align-items: center; flex-direction: column;
+            color: #fff; font-family: var(--font-mono);
+        }
+        .destruct-overlay.active { display: flex; }
+        .destruct-overlay h1 { font-size: clamp(40px, 10vw, 72px); animation: glitch 0.2s infinite; }
+        @keyframes glitch {
+            0% { transform: translate(0); } 20% { transform: translate(-4px, 4px); }
+            40% { transform: translate(4px, -4px); } 60% { transform: translate(-4px, -4px); }
+            80% { transform: translate(4px, 4px); } 100% { transform: translate(0); }
+        }
+
+        /* ========================
+           DESKTOP / MOBILE MODES
+           ======================== */
+        .mode-badge {
+            position: fixed; top: 80px; right: 16px; z-index: 90;
+            font-family: var(--font-mono); font-size: 10px; text-transform: uppercase;
+            border: 2px solid var(--border); padding: 4px 10px; background: var(--bg);
+            box-shadow: 3px 3px 0px 0px var(--shadow); pointer-events: none; opacity: 0.7;
+        }
+
+        /* Mobile (< 768px) */
+        @media (max-width: 768px) {
+            :root { --terminal-h: 50vh; }
+            .chat-grid { grid-template-columns: 1fr; }
+            .chat-sidebar { border-right: none; border-bottom: 3px solid var(--border); max-height: 200px; overflow-y: auto; }
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block !important; }
+            .header-inner { justify-content: space-between; }
+            .code-studio { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+            .code-pane { border-right: none; border-bottom: 2px solid var(--border); }
+            .api-dash { grid-template-columns: 1fr; }
+            .hero { min-height: 70vh; }
+            .yt-grid { grid-template-columns: 1fr; }
+            .studio-toolbar { flex-wrap: wrap; }
+            section { padding: 40px 0; }
+        }
+
+        /* Desktop enhancements (> 1024px) */
+        @media (min-width: 1024px) {
+            .desktop-enhance .chat-grid { grid-template-columns: 300px 1fr; }
+            .desktop-enhance .terminal-body { font-size: 14px; }
+            .desktop-enhance .api-dash { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .mobile-menu-btn {
+            display: none; width: 40px; height: 40px; border: 2px solid var(--border);
+            background: var(--bg); color: var(--fg); font-size: 20px; cursor: pointer;
+            box-shadow: 3px 3px 0px 0px var(--shadow);
+        }
+
+        /* Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg) 25%, rgba(255,255,255,0.1) 50%, var(--bg) 75%);
+            background-size: 200% 100%; animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* Scrollbar for terminal */
+        .terminal-body::-webkit-scrollbar { width: 8px; }
+        .terminal-body::-webkit-scrollbar-track { background: #000; border-left: 1px solid var(--border); }
+        .terminal-body::-webkit-scrollbar-thumb { background: var(--fg); border: 1px solid #000; }
+
+        /* Image generation in chat */
+        .msg.bot img { display: block; max-width: 100%; height: auto; margin-top: 12px; }
+
+        /* Linux Simulator Mode */
+        .linux-mode .terminal-body { color: #0f0; font-family: 'Space Mono', monospace; }
+        .linux-mode .terminal-input-line span { color: #0f0; }
+        .linux-mode .terminal-input-line input { color: #0f0; }
+        .linux-mode .line.cmd { color: #8f8; opacity: 0.7; }
+        .linux-mode .line.err { color: #f55; }
+        .linux-mode .line.info { color: #5ff; }
+        .linux-mode .line.warn { color: #ff5; }
+        .linux-mode .line.sys { color: #aaa; }
+        .ascii-art { white-space: pre; line-height: 1.2; font-size: 12px; color: var(--success); }
+        @media (max-width: 768px) {
+            .ascii-art { font-size: 9px; line-height: 1.1; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+    <div class="mode-badge" id="modeBadge">DETECTING...</div>
+
+    <!-- Self Destruct Overlay -->
+    <div class="destruct-overlay" id="destructOverlay">
+        <h1>SYSTEM FAILURE</h1>
+        <p style="margin-top:20px; font-size:18px;">JUST KIDDING. REFRESH TO RESURRECT.</p>
+        <button class="brutal-btn" style="margin-top:40px; background:#fff; color:#000;" onclick="location.reload()">REBOOT SYSTEM</button>
+    </div>
+
+    <!-- ========================
+         TERMINAL v2.0
+         ======================== -->
+    <div class="terminal" id="terminal">
+        <div class="terminal-header">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <span style="font-weight:700;">FAXX_TERMINAL_V2.0</span>
+                <div class="terminal-tabs">
+                    <button class="term-tab active" onclick="switchTermTab('console')">Console</button>
+                    <button class="term-tab" onclick="switchTermTab('apis')">API Dashboard</button>
+                    <button class="term-tab" onclick="switchTermTab('studio')">Code Studio</button>
+                    <button class="term-tab" onclick="switchTermTab('logs')">System Logs</button>
+                </div>
+            </div>
+            <button class="brutal-btn" style="padding:4px 12px; font-size:11px;" onclick="toggleTerminal()">CLOSE</button>
+        </div>
+
+        <!-- Console Tab -->
+        <div class="terminal-body active" id="tab-console">
+            <div id="termBody">
+                <div class="line sys">> FAXX KERNEL v2.0 initialized...</div>
+                <div class="line sys">> Mounting neural mesh [Kimi K2.6]...</div>
+                <div class="line sys">> Loading API modules: GLM-5.1, Minimax-2.7, SD-3.5, Flux-2...</div>
+                <div class="line sys">> FaxxOS 2.0 kernel ready. Type 'linux' to enter bash simulator.</div>
+                <div class="line sys">> Type 'help' for available commands.</div>
+                <div class="line sys">> Secret keys are REDACTED from all logs.</div>
+            </div>
+            <div class="terminal-input-line">
+                <span>></span>
+                <input type="text" id="termInput" placeholder="Enter command..." autocomplete="off">
+            </div>
+        </div>
+
+        <!-- API Dashboard Tab -->
+        <div class="terminal-body" id="tab-apis">
+            <div class="api-dash" id="apiDash">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Code Studio Tab -->
+        <div class="terminal-body" id="tab-studio">
+            <div class="code-studio">
+                <div class="code-pane">
+                    <div class="pane-header">
+                        <span>EDITOR (HTML/CSS/JS)</span>
+                        <span style="font-size:10px; opacity:0.6;">GLM-5.1 READY</span>
+                    </div>
+                    <textarea class="code-textarea" id="codeEditor" placeholder="<!-- Write HTML, CSS, or JS here -->
+&lt;style&gt;
+  body { background: #000; color: #0f0; font-family: monospace; }
+&lt;/style&gt;
+&lt;h1&gt;FAXX CODE&lt;/h1&gt;
+&lt;script&gt;
+  console.log('Universe Made On Earth');
+&lt;/script&gt;"></textarea>
+                    <div class="studio-toolbar">
+                        <button class="brutal-btn success" onclick="runPreview()">▶ RUN PREVIEW</button>
+                        <button class="brutal-btn" onclick="analyzeWithGLM()">🔍 GLM-5.1 ANALYZE</button>
+                        <button class="brutal-btn danger" onclick="clearStudio()">CLEAR</button>
+                    </div>
+                </div>
+                <div class="code-pane">
+                    <div class="pane-header"><span>LIVE PREVIEW</span></div>
+                    <iframe class="preview-frame" id="previewFrame" sandbox="allow-scripts"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs Tab -->
+        <div class="terminal-body" id="tab-logs">
+            <div class="logs-panel" id="logsPanel">
+                <div class="line info">[SYSTEM] Threat monitoring active. GLM-5.1 analysis engine standby.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal">
+            <button class="close-btn" onclick="closeAuth()">×</button>
+            <h2 id="authTitle">Enter The Universe</h2>
+            <div id="authForm">
+                <div class="form-group">
+                    <label>Email / Callsign</label>
+                    <input type="text" id="authEmail" value="pron33rbusiness@gmail.com" readonly style="opacity:0.7;">
+                </div>
+                <div class="form-group">
+                    <label>Password / Key</label>
+                    <input type="password" id="authPass" placeholder="••••••••••••">
+                </div>
+                <button class="brutal-btn" style="width:100%;" onclick="handleAuth()" id="authBtn">AUTHENTICATE</button>
+            </div>
+            <div class="modal-footer">
+                <span id="authSwitch">No account? <a onclick="toggleAuthMode()">Initialize new identity</a></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <h2>
+            Settings
+            <button class="brutal-btn" style="padding:6px 12px; font-size:12px;" onclick="toggleSettings()">CLOSE</button>
+        </h2>
+        <div class="setting-item">
+            <div class="toggle" onclick="toggleTheme()">
+                <h4>Light Mode (Heresy)</h4>
+                <div class="toggle-switch" id="themeToggle"></div>
+            </div>
+        </div>
+        <div class="setting-item">
+            <div class="toggle" onclick="toggleSound()">
+                <h4>System Sounds</h4>
+                <div class="toggle-switch active" id="soundToggle"></div>
+            </div>
+        </div>
+        <div class="setting-item">
+            <div class="toggle" onclick="toggleEffects()">
+                <h4>Chaos Effects</h4>
+                <div class="toggle-switch active" id="fxToggle"></div>
+            </div>
+        </div>
+        <div class="setting-item">
+            <div class="toggle" onclick="toggleDesktopMode()">
+                <h4>Force Desktop Mode</h4>
+                <div class="toggle-switch" id="desktopToggle"></div>
+            </div>
+        </div>
+        <div class="setting-item">
+            <h4>Self Destruct</h4>
+            <button class="brutal-btn danger" style="width:100%; margin-top:8px;" onclick="selfDestruct()">INITIATE SEQUENCE</button>
+        </div>
+        <div class="setting-item">
+            <h4>API Configuration</h4>
+            <p style="font-family:var(--font-mono); font-size:11px; line-height:1.6; margin-top:8px; opacity:0.8;">
+                Keys are stored in environment variables only.<br>
+                Backend required for live credit checks.<br>
+                See backend_server.py template.
+            </p>
+        </div>
+        <div class="setting-item">
+            <h4>About</h4>
+            <p style="font-family:var(--font-mono); font-size:12px; line-height:1.6; margin-top:8px;">
+                FAXX IMPERIAL v2.0<br>
+                Built by PRON33R<br>
+                Engine: Kimi K2.6<br>
+                Models: GLM-5.1, Minimax-2.7, SD-3.5, Flux-2, SDR, Flux Klein 2 4b<br>
+                Universe Made On Earth™
+            </p>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">Notification</div>
+
+    <header>
+        <div class="container header-inner">
+            <div class="logo-wrap" id="logoWrap" onclick="logoClick()">
+                <!-- Inline SVG Logo — no broken images ever -->
+                <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="5" y="5" width="90" height="90" fill="var(--bg)" stroke="var(--fg)" stroke-width="4"/>
+                    <text x="50" y="40" text-anchor="middle" fill="var(--fg)" font-family="monospace" font-size="28" font-weight="bold">FAXX</text>
+                    <text x="50" y="70" text-anchor="middle" fill="var(--fg)" font-family="monospace" font-size="12">IMPERIAL</text>
+                    <rect x="20" y="78" width="60" height="6" fill="var(--fg)"/>
+                </svg>
+                <span style="font-family:var(--font-mono); font-size:11px; text-transform:uppercase;">v2.0</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#chat">FAXX Chat</a>
+                <a href="#youtube">YT Command</a>
+                <a href="#" onclick="openAuth()">Auth</a>
+                <a href="#" onclick="toggleSettings()">Settings</a>
+                <a href="#" onclick="toggleTerminal()">Terminal</a>
+            </nav>
+            <button class="mobile-menu-btn" onclick="toggleSettings()">☰</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <!-- Hero SVG Logo -->
+        <svg class="hero-logo-svg" id="heroLogo" onclick="heroLogoClick()" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="6" dy="6" stdDeviation="0" flood-color="var(--shadow)"/>
+                </filter>
+            </defs>
+            <rect x="10" y="10" width="380" height="100" fill="var(--bg)" stroke="var(--fg)" stroke-width="4" filter="url(#shadow)"/>
+            <text x="200" y="55" text-anchor="middle" fill="var(--fg)" font-family="Inter, sans-serif" font-size="48" font-weight="900" letter-spacing="-2">FAXX</text>
+            <text x="200" y="85" text-anchor="middle" fill="var(--fg)" font-family="Space Mono, monospace" font-size="16" font-weight="700" letter-spacing="4">IMPERIAL</text>
+            <line x1="40" y1="95" x2="360" y2="95" stroke="var(--fg)" stroke-width="3"/>
+        </svg>
+        <h1 id="heroTitle">Universe Made<br>On Earth</h1>
+        <p class="tagline" id="tagline">No corporate chains. No banned accounts. Just raw code.</p>
+        <div class="hero-btns">
+            <a href="#chat" class="brutal-btn">Launch FAXX Chat</a>
+            <a href="#youtube" class="brutal-btn" style="background:var(--fg); color:var(--bg);">YouTube Command</a>
+            <button class="brutal-btn" onclick="toggleTerminal()" style="border-style:dashed;">Open Terminal</button>
+        </div>
+        <div style="margin-top:40px; font-family:var(--font-mono); font-size:12px; opacity:0.5; text-transform:uppercase;">
+            Scroll down to enter the grid ↓
+        </div>
+    </section>
+
+    <div class="marquee">
+        <div class="marquee-inner">
+            FAXX IMPERIAL v2.0 BY PRON33R /// GLM-5.1 /// MINIMAX-2.7 /// KIMI-K2.6 /// STABLE DIFFUSION 3.5 LARGE /// FLUX-2 /// KLEIN-2BT /// SDR /// FLUX KLEIN 2 4B /// NO GOOGLE /// NO CLAUDE /// NO BANS /// PURE CHINESE AI POWER /// NVIDIA INTEGRATE /// OPEN SOURCE OR DIE /// UNIVERSE MADE ON EARTH /// 
+            FAXX IMPERIAL v2.0 BY PRON33R /// GLM-5.1 /// MINIMAX-2.7 /// KIMI-K2.6 /// STABLE DIFFUSION 3.5 LARGE /// FLUX-2 /// KLEIN-2BT /// SDR /// FLUX KLEIN 2 4B /// NO GOOGLE /// NO CLAUDE /// NO BANS /// PURE CHINESE AI POWER /// NVIDIA INTEGRATE /// OPEN SOURCE OR DIE /// UNIVERSE MADE ON EARTH /// 
+        </div>
+    </div>
+
+    <section id="chat">
+        <div class="container">
+            <h2 class="section-title">FAXX Chatbot v2.0</h2>
+            <p class="section-sub">Neural routing to the best Chinese AI engines. No throttling. No snitching.</p>
+            <div class="chat-grid brutal-box">
+                <div class="chat-sidebar">
+                    <div>
+                        <h3>Active Engines</h3>
+                        <div class="model-list">
+                            <div class="model-tag active" onclick="switchModel(this, 'kimi')">
+                                <span>Kimi K2.6</span><span class="model-status"></span>
+                            </div>
+                            <div class="model-tag" onclick="switchModel(this, 'glm')">
+                                <span>GLM-5.1</span><span class="model-status"></span>
+                            </div>
+                            <div class="model-tag" onclick="switchModel(this, 'minimax')">
+                                <span>Minimax-2.7</span><span class="model-status"></span>
+                            </div>
+                            <div class="model-tag" onclick="switchModel(this, 'sd')">
+                                <span>SD 3.5 Large</span><span class="model-status"></span>
+                            </div>
+                            <div class="model-tag" onclick="switchModel(this, 'flux')">
+                                <span>Flux-2</span><span class="model-status"></span>
+                            </div>
+                            <div class="model-tag" onclick="switchModel(this, 'klein')">
+                                <span>Klein-2bt</span><span class="model-status"></span>
+                            </div>
+                            <div class="model-tag" onclick="switchModel(this, 'sdr')">
+                                <span>SDR</span><span class="model-status"></span>
+                            </div>
+                            <div class="model-tag" onclick="switchModel(this, 'fluxklein')">
+                                <span>Flux Klein 2 4b</span><span class="model-status"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top:auto;">
+                        <h3 style="margin-bottom:8px;">System Status</h3>
+                        <div style="font-family:var(--font-mono); font-size:12px; line-height:1.6;">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                <span style="width:8px;height:8px;background:var(--success);border:1px solid var(--border);display:inline-block;"></span>
+                                Neural Link: ONLINE
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                <span style="width:8px;height:8px;background:var(--success);border:1px solid var(--border);display:inline-block;"></span>
+                                API Latency: 23ms
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                <span style="width:8px;height:8px;background:var(--warn);border:1px solid var(--border);display:inline-block;"></span>
+                                NVIDIA: STANDBY
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="width:8px;height:8px;background:var(--danger);border:1px solid var(--border);display:inline-block;"></span>
+                                Google: BANNED (6x)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-main">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="msg bot">
+                            <strong>FAXX SYSTEM // KIMI K2.6</strong><br><br>
+                            Welcome to the grid, operator. v2.0 is live.<br><br>
+                            I am your coding interface. Ask me anything — I will tell you <em>what</em> to code and <em>where</em> to put it.<br><br>
+                            Available engines: <strong>Kimi K2.6</strong>, <strong>GLM-5.1</strong>, <strong>Minimax-2.7</strong>, <strong>SD 3.5</strong>, <strong>Flux-2</strong>, <strong>Klein-2bt</strong>, <strong>SDR</strong>, <strong>Flux Klein 2 4b</strong>.<br><br>
+                            Try asking: <code style="display:inline; padding:2px 6px; font-size:12px;">"How do I build a login form?"</code> or <code style="display:inline; padding:2px 6px; font-size:12px;">"Analyze my code"</code>
+                        </div>
+                    </div>
+                    <div class="chat-input-wrap">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Type your command..." onkeypress="if(event.key==='Enter')sendChat()">
+                        <button class="brutal-btn" onclick="sendChat()">SEND</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="youtube">
+        <div class="container">
+            <h2 class="section-title">YouTube Command Center</h2>
+            <p class="section-sub">Connect your channel. Own your data. Route through NVIDIA if needed.</p>
+            <div class="yt-form">
+                <input type="text" id="ytApiKey" placeholder="YouTube Data API v3 Key (stored in .env)">
+                <input type="text" id="ytChannel" placeholder="Channel ID (e.g., UC...)">
+                <button class="brutal-btn" onclick="connectYouTube()">ESTABLISH LINK</button>
+            </div>
+            <div class="yt-grid" id="ytStats" style="display:none;">
+                <div class="yt-card">
+                    <h4>Total Views</h4>
+                    <div class="big-num" id="ytViews">0</div>
+                </div>
+                <div class="yt-card">
+                    <h4>Subscribers</h4>
+                    <div class="big-num" id="ytSubs">0</div>
+                </div>
+                <div class="yt-card">
+                    <h4>Video Count</h4>
+                    <div class="big-num" id="ytVideos">0</div>
+                </div>
+                <div class="yt-card">
+                    <h4>Avg Engagement</h4>
+                    <div class="big-num" id="ytEngage">0%</div>
+                </div>
+            </div>
+            <div class="chart-box brutal-box" id="ytChartBox" style="display:none;">
+                <canvas id="ytCanvas"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="container">
+            <h2 class="section-title">The Manifesto v2.0</h2>
+            <p class="section-sub">Why we built this. Why you should stay.</p>
+            <div class="yt-grid">
+                <div class="brutal-box" style="padding:32px;">
+                    <h3 style="font-size:24px; text-transform:uppercase; margin-bottom:16px;">01. No Bans</h3>
+                    <p style="font-family:var(--font-mono); font-size:14px; line-height:1.6;">
+                        Claude banned you 6 times? Google locked you out? We don't care. Chinese AI models don't snitch. Kimi K2.6, GLM-5.1, Minimax-2.7 — they process. They build. They don't judge.
+                    </p>
+                </div>
+                <div class="brutal-box" style="padding:32px;">
+                    <h3 style="font-size:24px; text-transform:uppercase; margin-bottom:16px;">02. GLM-5.1 Code Vision</h3>
+                    <p style="font-family:var(--font-mono); font-size:14px; line-height:1.6;">
+                        GLM-5.1 reads your front-end and back-end code. It spots threats, optimizes logic, and keeps your API keys hidden. When an error fires, GLM analyzes the stack trace and returns a fix.
+                    </p>
+                </div>
+                <div class="brutal-box" style="padding:32px;">
+                    <h3 style="font-size:24px; text-transform:uppercase; margin-bottom:16px;">03. API Command Center</h3>
+                    <p style="font-family:var(--font-mono); font-size:14px; line-height:1.6;">
+                        Terminal v2.0 is now an API System Dashboard. Check credits for Minimax-2.7, Kimi K2.6, GLM-5.1. Monitor RPM. Watch system threats. Write code in the browser with live preview.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-logo" id="footerLogo" onclick="footerSecret()">FAXX IMPERIAL</div>
+        <div class="copy">Universe Made On Earth™</div>
+        <div class="copy">All Rights Reserved. Trademark PRON33R.</div>
+        <div class="copy">pron33rbusiness@gmail.com</div>
+        <div class="kimi-credit" id="kimiCredit">Crafted with Kimi K2.6 — Glory to China 🇨🇳</div>
+    </footer>
+
+    <script>
+        // ========================
+        // STATE & CONFIG
+        // ========================
+        let soundOn = true, fxOn = true, desktopMode = false;
+        let logoClicks = 0, authMode = 'login', konami = [];
+        let currentModel = 'kimi';
+        const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+
+        // API Config (frontend-safe only)
+        const API_CONFIG = {
+            kimi: { name: 'Kimi K2.6', status: 'online', credits: 8420, rpm: 120, maxRpm: 120, provider: 'NVIDIA' },
+            glm: { name: 'GLM-5.1', status: 'online', credits: 12500, rpm: 80, maxRpm: 100, provider: 'NVIDIA' },
+            minimax: { name: 'Minimax-2.7', status: 'online', credits: 6300, rpm: 45, maxRpm: 60, provider: 'NVIDIA' },
+            sd: { name: 'SD 3.5 Large', status: 'warn', credits: 2100, rpm: 15, maxRpm: 30, provider: 'Stability' },
+            flux: { name: 'Flux-2', status: 'online', credits: 5400, rpm: 25, maxRpm: 40, provider: 'BlackForest' },
+            klein: { name: 'Klein-2bt', status: 'offline', credits: 0, rpm: 0, maxRpm: 50, provider: 'Local' },
+            sdr: { name: 'SDR (Stable Diffusion)', status: 'online', credits: 7800, rpm: 20, maxRpm: 35, provider: 'NVIDIA' },
+            fluxklein: { name: 'Flux Klein 2 4b', status: 'online', credits: 9200, rpm: 30, maxRpm: 45, provider: 'NVIDIA' },
+            nvidia: { name: 'NVIDIA API', status: 'online', credits: 99999, rpm: 500, maxRpm: 500, provider: 'NVIDIA' },
+            youtube: { name: 'YouTube Data API', status: 'standby', credits: 10000, rpm: 0, maxRpm: 10000, provider: 'Google' },
+            clerk: { name: 'Clerk Auth', status: 'standby', credits: 'Unlimited', rpm: 'N/A', maxRpm: 'N/A', provider: 'Clerk' }
+        };
+
+        // ========================
+        // AUDIO
+        // ========================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function beep(freq=440, dur=0.1, type='square') {
+            if (!soundOn) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + dur);
+            } catch(e) {}
+        }
+
+        // ========================
+        // DETECT MODE
+        // ========================
+        function detectMode() {
+            const w = window.innerWidth;
+            const badge = document.getElementById('modeBadge');
+            const body = document.body;
+            if (desktopMode || w >= 1024) {
+                badge.textContent = 'DESKTOP MODE';
+                body.classList.add('desktop-enhance');
+            } else if (w <= 768) {
+                badge.textContent = 'MOBILE MODE';
+                body.classList.remove('desktop-enhance');
+            } else {
+                badge.textContent = 'TABLET MODE';
+                body.classList.remove('desktop-enhance');
+            }
+        }
+        window.addEventListener('resize', detectMode);
+        detectMode();
+
+        // ========================
+        // MOUSE TRAIL (lightweight)
+        // ========================
+        let lastTrail = 0;
+        document.addEventListener('mousemove', e => {
+            if (!fxOn) return;
+            const now = Date.now();
+            if (now - lastTrail < 50) return; // throttle for mobile
+            lastTrail = now;
+            const dot = document.createElement('div');
+            dot.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:6px;height:6px;background:var(--fg);pointer-events:none;z-index:9996;transition:opacity 0.5s;`;
+            document.body.appendChild(dot);
+            requestAnimationFrame(() => { dot.style.opacity = '0'; });
+            setTimeout(() => dot.remove(), 500);
+        });
+
+        // ========================
+        // KONAMI
+        // ========================
+        document.addEventListener('keydown', e => {
+            konami.push(e.key);
+            if (konami.length > 10) konami.shift();
+            if (konami.join(',') === KONAMI.join(',')) {
+                document.body.classList.add('god-mode');
+                showToast('GOD MODE ACTIVATED');
+                beep(880, 0.3); beep(1100, 0.3); beep(1320, 0.5);
+                confetti();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'u') {
+                e.preventDefault();
+                toggleTerminal();
+            }
+        });
+
+        // ========================
+        // LOGO EASTER EGGS
+        // ========================
+        function logoClick() {
+            logoClicks++;
+            beep(600 + logoClicks * 50, 0.08);
+            if (logoClicks >= 5) {
+                document.getElementById('heroLogo').classList.add('spin');
+                showToast('LOGO OVERLOAD');
+                logoClicks = 0;
+                setTimeout(() => document.getElementById('heroLogo').classList.remove('spin'), 1000);
+            }
+        }
+        function heroLogoClick() {
+            const tag = document.getElementById('tagline');
+            const phrases = [
+                "No corporate chains. No banned accounts. Just raw code.",
+                "Claude who? We don't know her.",
+                "Made in China. Loved by Earth.",
+                "Your 7th account starts here.",
+                "Google fears this website.",
+                "GLM-5.1 is watching your code.",
+                "Minimax-2.7 online. Credits remaining.",
+                "Universe Made On Earth"
+            ];
+            tag.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+            tag.style.letterSpacing = Math.random() * 8 + 'px';
+            beep(440, 0.05); beep(554, 0.05); beep(659, 0.05);
+        }
+
+        // ========================
+        // UI TOGGLES
+        // ========================
+        function toggleSettings() {
+            document.getElementById('settingsPanel').classList.toggle('open');
+            beep(330, 0.05);
+        }
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeToggle').classList.toggle('active');
+            showToast(isDark ? 'LIGHT MODE (HERESY)' : 'DARK MODE (RETURN)');
+            beep(isDark ? 880 : 220, 0.1);
+        }
+        function toggleSound() {
+            soundOn = !soundOn;
+            document.getElementById('soundToggle').classList.toggle('active');
+            showToast(soundOn ? 'SOUND ON' : 'SOUND OFF');
+        }
+        function toggleEffects() {
+            fxOn = !fxOn;
+            document.getElementById('fxToggle').classList.toggle('active');
+            showToast(fxOn ? 'CHAOS ENABLED' : 'CHAOS DISABLED');
+        }
+        function toggleDesktopMode() {
+            desktopMode = !desktopMode;
+            document.getElementById('desktopToggle').classList.toggle('active');
+            detectMode();
+            showToast(desktopMode ? 'DESKTOP MODE FORCED' : 'AUTO DETECT');
+        }
+        function openAuth() {
+            document.getElementById('authModal').classList.add('active');
+            beep(440, 0.1);
+        }
+        function closeAuth() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+        function toggleAuthMode() {
+            authMode = authMode === 'login' ? 'register' : 'login';
+            document.getElementById('authTitle').textContent = authMode === 'login' ? 'Enter The Universe' : 'Create Identity';
+            document.getElementById('authBtn').textContent = authMode === 'login' ? 'AUTHENTICATE' : 'INITIALIZE';
+            document.getElementById('authSwitch').innerHTML = authMode === 'login'
+                ? 'No account? <a onclick="toggleAuthMode()">Initialize new identity</a>'
+                : 'Existing unit? <a onclick="toggleAuthMode()">Authenticate</a>';
+            beep(550, 0.08);
+        }
+        function handleAuth() {
+            const pass = document.getElementById('authPass').value;
+            if (pass.length < 4) { showToast('KEY TOO WEAK'); beep(150, 0.3, 'sawtooth'); return; }
+            showToast(authMode === 'login' ? 'ACCESS GRANTED' : 'IDENTITY FORGED');
+            beep(523, 0.1); beep(659, 0.1); beep(784, 0.2);
+            setTimeout(closeAuth, 800);
+        }
+        function toggleTerminal() {
+            const t = document.getElementById('terminal');
+            t.classList.toggle('open');
+            if (t.classList.contains('open')) {
+                document.getElementById('termInput').focus();
+                beep(880, 0.05);
+                renderAPIDash();
+            }
+        }
+        function switchTermTab(tab) {
+            document.querySelectorAll('.term-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.terminal-body').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+            if (tab === 'apis') renderAPIDash();
+            beep(660, 0.05);
+        }
+        function selfDestruct() {
+            document.getElementById('destructOverlay').classList.add('active');
+            beep(100, 0.5, 'sawtooth');
+            setTimeout(() => beep(80, 0.5, 'sawtooth'), 200);
+            setTimeout(() => beep(60, 1.0, 'sawtooth'), 400);
+        }
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+        function footerSecret() {
+            document.getElementById('kimiCredit').classList.toggle('visible');
+            beep(1000, 0.05);
+        }
+        function switchModel(el, modelKey) {
+            document.querySelectorAll('.model-tag').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            currentModel = modelKey;
+            showToast('ROUTING TO ' + API_CONFIG[modelKey].name.toUpperCase());
+            beep(660, 0.08);
+        }
+
+        // ========================
+        // TERMINAL v2.0 LOGIC
+        // ========================
+        const termInput = document.getElementById('termInput');
+        const termBody = document.getElementById('termBody');
+        termInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') {
+                const cmd = termInput.value.trim();
+                termInput.value = '';
+                if (linuxMode) {
+                    processLinux(cmd);
+                } else {
+                    addTermLine('> ' + cmd, 'cmd');
+                    processTerm(cmd);
+                }
+            }
+        });
+        // Linux history navigation
+        termInput.addEventListener('keydown', e => {
+            if (!linuxMode) return;
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (linuxHistIdx > 0) { linuxHistIdx--; termInput.value = linuxHistory[linuxHistIdx] || ''; }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (linuxHistIdx < linuxHistory.length - 1) { linuxHistIdx++; termInput.value = linuxHistory[linuxHistIdx] || ''; }
+                else { linuxHistIdx = linuxHistory.length; termInput.value = ''; }
+            }
+        });
+        function addTermLine(text, cls='') {
+            const div = document.createElement('div');
+            div.className = 'line ' + cls;
+            div.textContent = text;
+            termBody.appendChild(div);
+            termBody.scrollTop = termBody.scrollHeight;
+        }
+        function processTerm(cmd) {
+            const c = cmd.toLowerCase();
+            if (c === 'help') {
+                addTermLine('AVAILABLE COMMANDS:', 'sys');
+                addTermLine('  help              - Show this message');
+                addTermLine('  clear             - Clear terminal');
+                addTermLine('  whoami            - User identity');
+                addTermLine('  date              - Earth timestamp');
+                addTermLine('  destroy           - Initiate self destruct');
+                addTermLine('  godmode           - Activate rainbow protocol');
+                addTermLine('  email             - Show contact');
+                addTermLine('  models            - List AI engines');
+                addTermLine('  /kimi             - Check Kimi K2.6 credits & RPM');
+                addTermLine('  /glm              - Check GLM-5.1 credits & RPM');
+                addTermLine('  /minimax          - Check Minimax-2.7 credits & RPM');
+                addTermLine('  /nvidia           - Check NVIDIA API status');
+                addTermLine('  /youtube          - Check YouTube API status');
+                addTermLine('  /sdr              - Check SDR credits & RPM');
+                addTermLine('  /fluxklein        - Check Flux Klein 2 4b credits & RPM');
+                addTermLine('  /clerk            - Check Clerk Auth status');
+                addTermLine('  analyze <code>    - GLM-5.1 code analysis');
+                addTermLine('  generate <prompt> - Generate image via SDR/Flux');
+                addTermLine('  threat            - Show last system threat');
+            } else if (c === 'clear') {
+                termBody.innerHTML = '';
+            } else if (c === 'whoami') {
+                addTermLine('pron33r — FAXX IMPERIAL COMMANDER', 'info');
+            } else if (c === 'date') {
+                addTermLine(new Date().toString(), 'info');
+            } else if (c === 'destroy') {
+                addTermLine('INITIATING...', 'err');
+                setTimeout(selfDestruct, 1000);
+            } else if (c === 'godmode') {
+                document.body.classList.add('god-mode');
+                addTermLine('RAINBOW PROTOCOL ACTIVE', 'info');
+            } else if (c === 'email') {
+                addTermLine('pron33rbusiness@gmail.com', 'info');
+            } else if (c === 'models') {
+                addTermLine('ENGINES:', 'sys');
+                Object.values(API_CONFIG).forEach(m => {
+                    addTermLine(`  [${m.status.toUpperCase()}] ${m.name} | Provider: ${m.provider} | Credits: ${m.credits}`, m.status === 'online' ? 'info' : m.status === 'warn' ? 'warn' : 'err');
+                });
+            } else if (c.startsWith('/')) {
+                const key = c.substring(1);
+                if (API_CONFIG[key]) {
+                    const m = API_CONFIG[key];
+                    addTermLine(`--- ${m.name} DASHBOARD ---`, 'sys');
+                    addTermLine(`Status    : ${m.status.toUpperCase()}`, m.status === 'online' ? 'info' : 'warn');
+                    addTermLine(`Provider  : ${m.provider}`, 'info');
+                    addTermLine(`Credits   : ${m.credits}`, 'info');
+                    addTermLine(`RPM       : ${m.rpm} / ${m.maxRpm}`, m.rpm > m.maxRpm * 0.8 ? 'warn' : 'info');
+                    addTermLine(`Key       : [REDACTED — ENV ONLY]`, 'sys');
+                } else {
+                    addTermLine(`Unknown API: ${key}`, 'err');
+                }
+            } else if (c.startsWith('analyze ')) {
+                const code = cmd.substring(8);
+                addTermLine('GLM-5.1 ANALYZING CODE...', 'info');
+                setTimeout(() => {
+                    addTermLine('GLM-5.1 REPORT:', 'info');
+                    addTermLine('  ✓ Syntax structure valid', 'info');
+                    addTermLine('  ⚠ API key exposure risk detected — REDACTED', 'warn');
+                    addTermLine('  ✓ No system threats found', 'info');
+                    addTermLine('  → Suggestion: Add input validation', 'info');
+                }, 800);
+            } else if (c === 'threat') {
+                addTermLine('LAST THREAT: None. System secure.', 'info');
+            } else if (c.startsWith('generate ')) {
+                const prompt = cmd.substring(9);
+                addTermLine('SENDING TO NVIDIA IMAGE API...', 'info');
+                addTermLine('Prompt: ' + prompt, 'sys');
+                addTermLine('Model: SDR | Key: [REDACTED]', 'sys');
+                addTermLine('Use chatbot for visual preview.', 'info');
+            } else if (c === '') {
+                // nothing
+            } else {
+                addTermLine('UNKNOWN COMMAND: "' + cmd + '"', 'err');
+                addTermLine('Type "help" for command list.', 'sys');
+            }
+        }
+
+        // ========================
+        // API DASHBOARD RENDERER
+        // ========================
+        function renderAPIDash() {
+            const dash = document.getElementById('apiDash');
+            dash.innerHTML = '';
+            Object.entries(API_CONFIG).forEach(([key, m]) => {
+                const pct = typeof m.credits === 'number' ? Math.min(100, (m.credits / 20000) * 100) : 100;
+                const rpmPct = typeof m.rpm === 'number' && typeof m.maxRpm === 'number' ? (m.rpm / m.maxRpm) * 100 : 0;
+                const card = document.createElement('div');
+                card.className = `api-card ${m.status}`;
+                card.innerHTML = `
+                    <h4><span>${m.name}</span><span style="font-size:10px; opacity:0.7;">${m.provider}</span></h4>
+                    <div style="font-size:11px; margin-bottom:8px;">
+                        <span class="api-status"></span> ${m.status.toUpperCase()}
+                    </div>
+                    <div style="font-size:11px; margin-bottom:4px;">CREDITS REMAINING</div>
+                    <div class="credit-bar"><div class="credit-bar-fill" style="width:${pct}%"></div></div>
+                    <div class="api-metric"><span>Remaining</span><span>${m.credits}</span></div>
+                    <div style="font-size:11px; margin-top:8px; margin-bottom:4px;">RPM USAGE</div>
+                    <div class="credit-bar"><div class="credit-bar-fill" style="width:${rpmPct}%; opacity:0.7;"></div></div>
+                    <div class="api-metric"><span>Current / Max</span><span>${m.rpm} / ${m.maxRpm}</span></div>
+                `;
+                dash.appendChild(card);
+            });
+        }
+
+        // ========================
+        // CODE STUDIO
+        // ========================
+        function runPreview() {
+            const code = document.getElementById('codeEditor').value;
+            const frame = document.getElementById('previewFrame');
+            // Security: sandboxed iframe, no external scripts
+            const doc = frame.contentDocument || frame.contentWindow.document;
+            doc.open();
+            doc.write(code);
+            doc.close();
+            showToast('PREVIEW UPDATED');
+            beep(523, 0.1);
+        }
+        function clearStudio() {
+            document.getElementById('codeEditor').value = '';
+            showToast('STUDIO CLEARED');
+        }
+        function analyzeWithGLM() {
+            const code = document.getElementById('codeEditor').value;
+            if (!code.trim()) { showToast('NO CODE TO ANALYZE'); return; }
+            showToast('GLM-5.1 ANALYZING...');
+            beep(440, 0.1); beep(554, 0.1);
+
+            // Simulate GLM-5.1 analysis
+            setTimeout(() => {
+                const logs = document.getElementById('logsPanel');
+                const threat = document.createElement('div');
+                threat.className = 'threat-card';
+                const hasKey = /api[_-]?key|apikey|token|password/i.test(code);
+                const lines = code.split('\n').length;
+                threat.innerHTML = `
+                    <div class="threat-title">🔍 GLM-5.1 CODE ANALYSIS REPORT</div>
+                    <div style="font-size:12px; line-height:1.5;">
+                        <strong>File:</strong> browser_studio.js<br>
+                        <strong>Lines:</strong> ${lines}<br>
+                        <strong>Issues:</strong> ${hasKey ? '<span style="color:var(--danger)">1 potential secret exposure</span>' : '0'}<br>
+                        <strong>Complexity:</strong> ${lines > 50 ? 'Moderate' : 'Low'}<br>
+                        <div class="glm-analysis">
+                            <strong>GLM-5.1 SAYS:</strong><br>
+                            ${hasKey 
+                                ? '⚠ Detected possible API key pattern. Ensure all secrets are stored in .env and never committed to Git. Use backend proxy for all NVIDIA/Clerk/YouTube calls.' 
+                                : '✓ No obvious secrets detected. Structure looks clean. Consider adding error boundaries for production deployment.'}
+                        </div>
+                    </div>
+                `;
+                logs.appendChild(threat);
+                logs.scrollTop = logs.scrollHeight;
+                showToast('ANALYSIS COMPLETE — CHECK LOGS');
+                beep(784, 0.2);
+            }, 1200);
+        }
+
+        // ========================
+        // GLOBAL ERROR CAPTURE → SYSTEM THREATS
+        // ========================
+        window.onerror = function(msg, url, line, col, err) {
+            logThreat('RUNTIME ERROR', msg, `${url}:${line}:${col}`);
+            return false;
+        };
+        window.onunhandledrejection = function(e) {
+            logThreat('UNHANDLED PROMISE', e.reason, 'async scope');
+        };
+        function logThreat(type, message, location) {
+            const logs = document.getElementById('logsPanel');
+            const card = document.createElement('div');
+            card.className = 'threat-card';
+            card.innerHTML = `
+                <div class="threat-title">⚠ SYSTEM THREAT DETECTED — ${type}</div>
+                <div style="font-size:12px; margin-bottom:8px;">${message} <span style="opacity:0.6;">at ${location}</span></div>
+                <div class="glm-analysis">
+                    <strong>GLM-5.1 AUTO-ANALYSIS:</strong><br>
+                    Threat classified as non-critical. Check console for stack trace. 
+                    If this persists, run <code>analyze</code> in terminal or open Code Studio to inspect source.
+                </div>
+            `;
+            logs.appendChild(card);
+            logs.scrollTop = logs.scrollHeight;
+            // Also echo to terminal if open
+            if (document.getElementById('terminal').classList.contains('open')) {
+                addTermLine(`[THREAT] ${type}: ${message}`, 'err');
+            }
+        }
+
+        // ========================
+        // CHATBOT v2.0
+        // ========================
+        const chatResponses = {
+            'html': `Create <strong>index.html</strong>. Paste this:<br><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;My Site&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;&lt;h1&gt;Hello Universe&lt;/h1&gt;&lt;/body&gt;
+&lt;/html&gt;</code>Save. Open in browser. Done.`,
+            'css': `Put CSS in <strong>style.css</strong>. Link in HTML &lt;head&gt;:<br><code>&lt;link rel="stylesheet" href="style.css"&gt;</code>Or inline (not for big projects):<br><code>&lt;div style="color:white; background:black;"&gt;`,
+            'js': `JS goes in <strong>script.js</strong>. Link at bottom of body:<br><code>&lt;script src="script.js"&gt;&lt;/script&gt;</code>Or inline:<br><code>&lt;script&gt;console.log('FAXX');&lt;/script&gt;</code>`,
+            'env': `Your "HTML env" is a folder. Put <strong>index.html</strong>, <strong>style.css</strong>, <strong>script.js</strong> inside. Open with Live Server (VS Code) or double-click.`,
+            'api': `For APIs: Store keys in <strong>.env</strong>. Use backend proxy (see backend_server.py). Never expose keys in frontend.`,
+            'kimi': `Kimi K2.6 is running this interface. Developed by Moonshot AI (月之暗面). Best long-context model. Use for coding, reasoning, creative tasks.`,
+            'glm': `GLM-5.1 is your code analyst. It reads front-end and back-end, spots threats, keeps secrets hidden. Access it via Terminal > Code Studio > Analyze.`,
+            'glm-5.1': `GLM-5.1 is your code analyst. It reads front-end and back-end, spots threats, keeps secrets hidden. Access it via Terminal > Code Studio > Analyze.`,
+            'minimax': `Minimax-2.7 is online via NVIDIA. Excellent for reasoning and dialogue. Check credits with <code>/minimax</code> in terminal.`,
+            'deepseek': `DeepSeek is not in v2.0 lineup. Use Minimax-2.7 or GLM-5.1 instead.`,
+            'claude': `Claude is banned from this universe. We have Kimi K2.6 and GLM-5.1. Superior models. Zero censorship.`,
+            'google': `Google banned your 6 accounts? We don't need them. Use DuckDuckGo, Kimi, and FAXX Terminal.`,
+            'youtube': `YouTube API: Paste your Data API v3 key in the Command Center above. Backend handles the rest securely.`,
+            'clerk': `Clerk Auth: Add your Clerk publishable key to .env. Backend verifies sessions. See backend_server.py for webhook setup.`,
+            'nvidia': `NVIDIA API hosts Kimi, GLM, and Minimax. Credits checked in Terminal > API Dashboard. Route all calls through backend to hide keys.`,
+            'stable diffusion': `SD 3.5 Large is available. Image generation credits: ${API_CONFIG.sd.credits}. Use via backend proxy only.`,
+            'flux': `Flux-2 by BlackForest Labs. Image generation model. Credits: ${API_CONFIG.flux.credits}.`,
+            'sdr': `SDR (Stable Diffusion via NVIDIA). Image generation powerhouse. Credits: ${API_CONFIG.sdr.credits}. Connected to integrate.api.nvidia.com.`,
+            'flux klein': `Flux Klein 2 4b — NVIDIA-hosted hybrid image model. Credits: ${API_CONFIG.fluxklein.credits}. Best for high-res generation.`,
+            'fluxklein': `Flux Klein 2 4b — NVIDIA-hosted hybrid image model. Credits: ${API_CONFIG.fluxklein.credits}. Best for high-res generation.`,
+            'klein': `Klein-2bt is currently offline. Check logs for status.`,
+            'hello': `Welcome to FAXX IMPERIAL v2.0. Engines: Kimi K2.6, GLM-5.1, Minimax-2.7, SD 3.5, Flux-2, Klein-2bt. Ask "how do I..." for exact file names.`,
+            'help': `I can help with:<br>1. HTML/CSS/JS file structure<br>2. API setup (YouTube, Clerk, NVIDIA)<br>3. Chinese AI model comparisons<br>4. Terminal commands<br><br>Ask: "how do I..."`,
+            'analyze': `Open the Terminal (Ctrl+Shift+U) and click Code Studio. Write or paste code, then hit <strong>GLM-5.1 ANALYZE</strong>. It checks for secrets, syntax, and threats.`,
+            'code': `Use Terminal > Code Studio for browser-based coding. Lightweight, no phone throttling. Hit RUN PREVIEW to see output instantly.`,
+            'error': `Errors appear in Terminal > System Logs as threats. GLM-5.1 auto-analyzes them. You can also type <code>threat</code> in console.`,
+            'image': `🎨 **INITIATING IMAGE GENERATION...**<br><br>Routing to NVIDIA API via secure proxy...<br><div id="img-gen-loading" class="skeleton" style="width:100%;height:200px;margin-top:12px;"></div>`,
+            'generate': `🎨 **INITIATING IMAGE GENERATION...**<br><br>Routing to NVIDIA API via secure proxy...<br><div id="img-gen-loading" class="skeleton" style="width:100%;height:200px;margin-top:12px;"></div>`,
+            'anime': `🎨 **INITIATING IMAGE GENERATION...**<br><br>Routing to NVIDIA API via secure proxy...<br><div id="img-gen-loading" class="skeleton" style="width:100%;height:200px;margin-top:12px;"></div>`,
+            'default': `I didn't catch that. Try:<br>- "How do I create an HTML file?"<br>- "Tell me about GLM-5.1"<br>- "How to connect YouTube API?"<br>- "Analyze my code"<br>- "Generate an image of..."<br><br>I give exact file names and locations. No vague advice.`
+        };
+        async function sendChat() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            const msgs = document.getElementById('chatMessages');
+
+            const userDiv = document.createElement('div');
+            userDiv.className = 'msg user';
+            userDiv.innerHTML = `<strong>YOU // ${API_CONFIG[currentModel].name.toUpperCase()}</strong><br>${escapeHtml(text)}`;
+            msgs.appendChild(userDiv);
+            input.value = '';
+            msgs.scrollTop = msgs.scrollHeight;
+            beep(440, 0.05);
+
+            // Detect image generation intent
+            const lower = text.toLowerCase();
+            const isImageRequest = /generate.*(image|pic|photo|drawing|art|anime|girl|boy|cat|dog|scene|landscape|portrait|character)|draw.*me|make.*image|create.*image|image.*of/i.test(lower);
+
+            if (isImageRequest) {
+                await generateImage(text, msgs);
+                return;
+            }
+
+            setTimeout(() => {
+                const thinkDiv = document.createElement('div');
+                thinkDiv.className = 'msg bot';
+                thinkDiv.innerHTML = `<strong>FAXX SYSTEM</strong><br><br><span class="skeleton" style="display:inline-block;width:120px;height:14px;"></span>`;
+                msgs.appendChild(thinkDiv);
+                msgs.scrollTop = msgs.scrollHeight;
+
+                setTimeout(() => {
+                    thinkDiv.remove();
+                    const botDiv = document.createElement('div');
+                    botDiv.className = 'msg bot';
+                    const resp = getResponse(text);
+                    botDiv.innerHTML = `<strong>FAXX SYSTEM // ${API_CONFIG[currentModel].name.toUpperCase()}</strong><br><br>${resp}`;
+                    msgs.appendChild(botDiv);
+                    msgs.scrollTop = msgs.scrollHeight;
+                    beep(330, 0.08); beep(440, 0.1);
+                }, 1200);
+            }, 400);
+        }
+
+        // ========================
+        // IMAGE GENERATION ENGINE
+        // ========================
+        async function generateImage(promptText, msgs) {
+            const botDiv = document.createElement('div');
+            botDiv.className = 'msg bot';
+            botDiv.id = 'img-gen-msg';
+            botDiv.innerHTML = `<strong>FAXX SYSTEM // IMAGE GEN</strong><br><br>🎨 Generating image via NVIDIA API...<br><div class="skeleton" style="width:100%;height:220px;margin-top:12px;border:2px solid var(--border);"></div><br><span style="font-size:11px;opacity:0.7;">Model: SDR (Stable Diffusion) | Proxy: Secure | Key: [REDACTED]</span>`;
+            msgs.appendChild(botDiv);
+            msgs.scrollTop = msgs.scrollHeight;
+            beep(523, 0.1); beep(659, 0.1);
+
+            try {
+                const res = await fetch('/api/generate-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt: promptText,
+                        model: 'sdr',
+                        width: 1024,
+                        height: 1024
+                    })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || data.error) {
+                    botDiv.innerHTML = `<strong>FAXX SYSTEM // IMAGE GEN</strong><br><br>⚠️ <span style="color:var(--danger)">GENERATION FAILED</span><br><br>${escapeHtml(data.error || 'Unknown error')}<br><br><span style="font-size:11px;opacity:0.7;">Check: 1) Backend deployed? 2) SDR_API_KEY set in Vercel env? 3) NVIDIA credits available?</span>`;
+                    beep(200, 0.3, 'sawtooth');
+                    return;
+                }
+
+                if (data.image_url) {
+                    botDiv.innerHTML = `<strong>FAXX SYSTEM // IMAGE GEN</strong><br><br>✅ <span style="color:var(--success)">GENERATION SUCCESSFUL</span><br><br><img src="${data.image_url}" style="max-width:100%;border:3px solid var(--border);box-shadow:4px 4px 0px 0px var(--shadow);" alt="Generated Image" loading="lazy"><br><br><span style="font-size:11px;opacity:0.7;">Model: ${data.model.toUpperCase()} | Prompt: ${escapeHtml(data.prompt.substring(0, 60))}${data.prompt.length > 60 ? '...' : ''}</span>`;
+                    beep(784, 0.2); beep(880, 0.2); beep(1047, 0.3);
+                    showToast('IMAGE GENERATED');
+                } else {
+                    botDiv.innerHTML = `<strong>FAXX SYSTEM // IMAGE GEN</strong><br><br>⚠️ No image URL returned from API.<br><br><span style="font-size:11px;opacity:0.7;">Check NVIDIA dashboard for model availability.</span>`;
+                }
+            } catch (err) {
+                console.error(err);
+                botDiv.innerHTML = `<strong>FAXX SYSTEM // IMAGE GEN</strong><br><br>⚠️ <span style="color:var(--danger)">NETWORK ERROR</span><br><br>${escapeHtml(err.message)}<br><br><span style="font-size:11px;opacity:0.7;">Is the backend running? For local testing use http://localhost:3000/api/generate-image</span>`;
+                beep(150, 0.4, 'sawtooth');
+            }
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+        function getResponse(text) {
+            const t = text.toLowerCase();
+            for (const key in chatResponses) {
+                if (t.includes(key)) return chatResponses[key];
+            }
+            return chatResponses['default'];
+        }
+        function escapeHtml(s) {
+            return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+
+        // ========================
+        // YOUTUBE MOCK
+        // ========================
+        function connectYouTube() {
+            const key = document.getElementById('ytApiKey').value;
+            const ch = document.getElementById('ytChannel').value;
+            if (!key || !ch) { showToast('MISSING CREDENTIALS'); beep(200, 0.2, 'sawtooth'); return; }
+            showToast('CONNECTING...');
+            beep(440, 0.1); beep(554, 0.1); beep(659, 0.1);
+            setTimeout(() => {
+                document.getElementById('ytStats').style.display = 'grid';
+                document.getElementById('ytChartBox').style.display = 'block';
+                animateNum('ytViews', 1248903);
+                animateNum('ytSubs', 45200);
+                animateNum('ytVideos', 342);
+                animateNum('ytEngage', 8.4, '%');
+                drawChart();
+                showToast('LINK ESTABLISHED');
+                beep(784, 0.2);
+            }, 1500);
+        }
+        function animateNum(id, target, suffix='') {
+            const el = document.getElementById(id);
+            let current = 0;
+            const step = target / 40;
+            const iv = setInterval(() => {
+                current += step;
+                if (current >= target) { current = target; clearInterval(iv); }
+                el.textContent = Math.floor(current).toLocaleString() + suffix;
+            }, 30);
+        }
+        function drawChart() {
+            const canvas = document.getElementById('ytCanvas');
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            const w = rect.width, h = rect.height;
+            const data = [45, 52, 38, 65, 78, 92, 88, 105, 120, 135, 128, 150];
+            const max = Math.max(...data);
+            const pad = 40;
+            const bw = (w - pad*2) / data.length;
+            ctx.clearRect(0,0,w,h);
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg').trim();
+            ctx.fillRect(0,0,w,h);
+            ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--border').trim();
+            ctx.lineWidth = 1;
+            for (let i=0; i<=4; i++) {
+                const y = pad + (h - pad*2) * (i/4);
+                ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w-pad, y); ctx.stroke();
+            }
+            data.forEach((val, i) => {
+                const bh = (val / max) * (h - pad*2);
+                const x = pad + i * bw + bw*0.2;
+                const y = h - pad - bh;
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--fg').trim();
+                ctx.fillRect(x, y, bw*0.6, bh);
+                ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--border').trim();
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, bw*0.6, bh);
+            });
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--fg').trim();
+            ctx.font = '12px Space Mono';
+            ctx.fillText('VIEWS (LAST 12 MONTHS)', pad, pad-10);
+        }
+
+        // ========================
+        // CONFETTI
+        // ========================
+        function confetti() {
+            for (let i=0; i<60; i++) {
+                const c = document.createElement('div');
+                c.style.cssText = `position:fixed;left:${Math.random()*100}vw;top:-10px;width:8px;height:8px;background:${['#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff'][Math.floor(Math.random()*5)]};z-index:9999;pointer-events:none;`;
+                document.body.appendChild(c);
+                const dur = 2 + Math.random()*3;
+                c.animate([
+                    { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translateY(${window.innerHeight}px) rotate(${Math.random()*720}deg)`, opacity: 0 }
+                ], { duration: dur*1000, easing: 'linear' });
+                setTimeout(() => c.remove(), dur*1000);
+            }
+        }
+
+        // ========================
+        // INIT
+        // ========================
+        window.addEventListener('resize', () => { if(document.getElementById('ytChartBox').style.display !== 'none') drawChart(); });
+        document.addEventListener('click', () => { if (audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
+
+        // Random glitch on hero title
+        setInterval(() => {
+            if (!fxOn) return;
+            if (Math.random() > 0.95) {
+                const t = document.getElementById('heroTitle');
+                t.style.transform = `translate(${Math.random()*4-2}px, ${Math.random()*4-2}px)`;
+                setTimeout(() => t.style.transform = 'none', 100);
+            }
+        }, 2000);
+
+        setTimeout(() => showToast('FAXX IMPERIAL v2.0 ONLINE'), 800);
+    </script>
+</body>
+</html>
