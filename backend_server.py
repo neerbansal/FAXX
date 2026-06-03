@@ -45,8 +45,8 @@ NVIDIA_BASE_URL = os.getenv("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com
 GLM_API_KEY     = os.getenv("GLM_API_KEY")        # e.g., nvapi-xxxxxxxx
 MINIMAX_API_KEY = os.getenv("MINIMAX_API_KEY")    # e.g., nvapi-xxxxxxxx
 KIMI_API_KEY    = os.getenv("KIMI_API_KEY")       # e.g., nvapi-xxxxxxxx
-SDR_API_KEY     = os.getenv("SDR_API_KEY")        # Stable Diffusion via NVIDIA
-FLUXKLEIN_API_KEY = os.getenv("FLUXKLEIN_API_KEY")  # Flux Klein 2 4b via NVIDIA
+SDR_API_KEY     = os.getenv("SD35_API_KEY")        # Stable Diffusion via NVIDIA
+FLUXKLEIN_API_KEY = os.getenv("FLUX_API_KEY")  # Flux Klein 2 4b via NVIDIA
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")    # Google Data API v3
 CLERK_SECRET    = os.getenv("CLERK_SECRET_KEY")   # Clerk backend key
 
@@ -57,6 +57,12 @@ CREDITS = {
     "glm":     {"remaining": 12500, "rpm": 80,  "max_rpm": 100, "status": "online"},
     "minimax": {"remaining": 6300,  "rpm": 45,  "max_rpm": 60,  "status": "online"},
     "kimi":    {"remaining": 8420,  "rpm": 120, "max_rpm": 120, "status": "online"},
+    "sd35":    {"remaining": 7800,  "rpm": 20,  "max_rpm": 35,  "status": "online"},
+    "flux":    {"remaining": 9200,  "rpm": 30,  "max_rpm": 45,  "status": "online"},
+    "klein":   {"remaining": 9200,  "rpm": 30,  "max_rpm": 45,  "status": "online"},
+    "deepseek":{"remaining": 5000,  "rpm": 60,  "max_rpm": 60,  "status": "online"},
+    "youtube": {"remaining": 10000, "rpm": 0,   "max_rpm": 0,   "status": "online"},
+    "clerk":   {"remaining": 99999, "rpm": 0,   "max_rpm": 0,   "status": "online"},
     "sdr":     {"remaining": 7800,  "rpm": 20,  "max_rpm": 35,  "status": "online"},
     "fluxklein": {"remaining": 9200,  "rpm": 30,  "max_rpm": 45,  "status": "online"},
     "nvidia":  {"remaining": 99999, "rpm": 500, "max_rpm": 500, "status": "online"},
@@ -216,7 +222,8 @@ def image_sdr():
             n=1,
             size="1024x1024"
         )
-        return jsonify({"model": "sdr", "url": completion.data[0].url})
+        b64 = completion.data[0].b64_json
+        return jsonify({"model": "sdr", "url": f"data:image/png;base64,{b64}"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -237,7 +244,8 @@ def image_fluxklein():
             n=1,
             size="1024x1024"
         )
-        return jsonify({"model": "flux-klein-2-4b", "url": completion.data[0].url})
+        b64 = completion.data[0].b64_json
+        return jsonify({"model": "flux-klein-2-4b", "url": f"data:image/png;base64,{b64}"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
