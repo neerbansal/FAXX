@@ -217,7 +217,7 @@ def image_sdr():
     try:
         # NVIDIA image gen pattern — adjust model name as needed
         completion = client.images.generate(
-            model="stabilityai/stable-diffusion-3.5-large",
+            model="stabilityai/stable-diffusion-3_5-large",
             prompt=prompt,
             n=1,
             size="1024x1024"
