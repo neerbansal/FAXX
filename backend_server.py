@@ -68,9 +68,9 @@ CREDITS = {
 def redact_secrets(text: str) -> str:
     """Remove API keys, tokens, passwords from logs/responses."""
     patterns = [
-        r'api[_-]?key["']?\s*[:=]\s*["']?[a-zA-Z0-9_-]{20,}["']?',
-        r'token["']?\s*[:=]\s*["']?[a-zA-Z0-9_-]{20,}["']?',
-        r'password["']?\s*[:=]\s*["']?[^"'\s]+["']?',
+        r'api[_-]?key["\']?\s*[:=]\s*["\']?[a-zA-Z0-9_-]{20,}["\']?',
+        r'token["\']?\s*[:=]\s*["\']?[a-zA-Z0-9_-]{20,}["\']?',
+        r'password["\']?\s*[:=]\s*["\']?[^"\' ]+["\']?',
         r'nvapi-[a-zA-Z0-9_-]+',
         r'sk-[a-zA-Z0-9]+',
     ]
