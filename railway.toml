@@ -5,6 +5,6 @@ builder = "NIXPACKS"
 nixPkgs = ["python311", "python311Packages.pip"]
 
 [deploy]
-startCommand = "gunicorn backend_server:app --bind 0.0.0.0:8080"
+startCommand = "gunicorn backend_server:app --bind 0.0.0.0:$PORT
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
