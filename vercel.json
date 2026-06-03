@@ -1,1 +1,5 @@
-{}
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://faxx.up.railway.app/api/$1" }
+  ]
+}

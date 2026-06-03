@@ -1399,7 +1399,7 @@
             beep(523, 0.1); beep(659, 0.1);
 
             try {
-                const activeModelId = typeof activeModel !== 'undefined' && activeModel ? activeModel.id : 'sdr';
+                const activeModelId = currentModel || 'sdr';
                 const imgEndpoint = activeModelId === 'fluxklein'
                     ? 'https://faxx.up.railway.app/api/image/fluxklein'
                     : 'https://faxx.up.railway.app/api/image/sdr';

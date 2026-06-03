@@ -101,7 +101,7 @@ const COMMANDS = {
       addTermLine('🧠 GLM 5.1 ANALYZING CODEBASE...', 'warn');
       addTermLine('Redacting secrets... ✓');
       try {
-        const res = await fetch('https://faxx.up.railway.app/api/glm-analyze', {
+        const res = await fetch('https://faxx.up.railway.app/api/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -366,7 +366,7 @@ function processTerm(cmd) {
 async function fetchCredits(provider, silent = false) {
   if (!silent) addTermLine(`Fetching ${provider.toUpperCase()} status...`);
   try {
-    const res = await fetch(`https://faxx.up.railway.app/api/credits?provider=${provider}`);
+    const res = await fetch(`https://faxx.up.railway.app/api/credits/${provider}`);
     const data = await res.json();
 
     if (data.error || data.status === 'NO_KEY') {
@@ -397,7 +397,7 @@ async function fetchCredits(provider, silent = false) {
 async function analyzeWithGLM(code, context) {
   addTermLine('🧠 Sending to GLM 5.1 (secrets redacted)...', 'warn');
   try {
-    const res = await fetch('https://faxx.up.railway.app/api/glm-analyze', {
+    const res = await fetch('https://faxx.up.railway.app/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code, context, mode: 'manual' })
