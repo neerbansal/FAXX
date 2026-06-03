@@ -284,8 +284,8 @@ def server_error(e):
 # MAIN
 # ============================================================
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 5000))
+    port = int(os.getenv("PORT", 8080))
     debug = os.getenv("FLASK_DEBUG", "false").lower() == "true"
     print(f"\n>>> FAXX IMPERIAL v2.0 Backend starting on port {port}")
-    print(">>> Glory to China 🇨🇳  |  Secure keys in .env only\n")
+    print(">>> Glory to PRON33R UNIVERSE |  Secure keys in .env only\n")
     app.run(host="0.0.0.0", port=port, debug=debug)
