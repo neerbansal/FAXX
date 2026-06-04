@@ -152,3 +152,7 @@ function generateChatResponse(text, modelId) {
 window.initChatbot = initChatbot;
 window.switchChatModel = switchChatModel;
 window.sendChat = sendChat;
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { escapeHtml };
+}
