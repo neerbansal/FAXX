@@ -36,7 +36,9 @@ except ImportError:
 
 load_dotenv()
 app = Flask(__name__)
-CORS(app, origins="*")  # Restrict to your frontend domain after deployment
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*")
+origins_list = [o.strip() for o in ALLOWED_ORIGINS.split(",")] if ALLOWED_ORIGINS != "*" else "*"
+CORS(app, origins=origins_list)  # Restrict to your frontend domain after deployment
 
 # ============================================================
 # ENVIRONMENT VARIABLES — NEVER HARDCODE KEYS
