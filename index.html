@@ -1288,8 +1288,8 @@
             const card = document.createElement('div');
             card.className = 'threat-card';
             card.innerHTML = `
-                <div class="threat-title">⚠ SYSTEM THREAT DETECTED — ${type}</div>
-                <div style="font-size:12px; margin-bottom:8px;">${message} <span style="opacity:0.6;">at ${location}</span></div>
+                <div class="threat-title">⚠ SYSTEM THREAT DETECTED — ${escapeHtml(String(type))}</div>
+                <div style="font-size:12px; margin-bottom:8px;">${escapeHtml(String(message))} <span style="opacity:0.6;">at ${escapeHtml(String(location))}</span></div>
                 <div class="glm-analysis">
                     <strong>GLM-5.1 AUTO-ANALYSIS:</strong><br>
                     Threat classified as non-critical. Check console for stack trace. 
@@ -1445,7 +1445,7 @@
             return chatResponses['default'];
         }
         function escapeHtml(s) {
-            return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
         }
 
         // ========================
