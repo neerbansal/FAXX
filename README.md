@@ -1,0 +1,29 @@
+FAXX — AI For The Whole World
+Not for the rich. Not for the comfortable. For everyone.
+Built by PRON33R. From Rajasthan, India. For the whole world.
+The Problem Nobody Wants to Fix
+Every AI company says "AI for everyone" then ships something that needs 8GB RAM, a $1000 iPhone, and a fast WiFi connection.
+That's not for everyone. That's for people who are already winning.
+Your cousin in a village with a cracked Samsung from 2016? Left behind.
+Your friend who can't afford cloud subscriptions? Left behind.
+Everyone who isn't already comfortable? Left behind.
+FAXX fixes this.
+What Is FAXX?
+FAXX is a lightweight AI agent system built to run on any device — cracked screens, low RAM, slow internet. No excuses. No gatekeeping.
+AI Agents — built by users, running on their own device
+Image Generation — works even on weak hardware
+Online model — not ollama-dependent, no local compute needed
+Designed for the whole world — not just the tech bubble
+The Mission
+The big corporations have been hoarding the tools.
+The resources, the compute, the access — locked behind paywalls and premium tiers.
+FAXX is the answer to that. Raw, independent, built from scratch with nothing but drive and vibe coding knowledge.
+No corporate chains. No gatekeeping. Just the tech, for everyone.
+Status
+🔴 Early stage. Actively building.
+This is not abandoned. This is loading.
+Built By
+PRON33R
+YouTube: real PRONEER1111
+Email: pron33rbusiness@gmail.com
+Universe Made On Earth
