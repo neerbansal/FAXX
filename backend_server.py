@@ -73,18 +73,19 @@ CREDITS = {
 # ============================================================
 # UTILITIES
 # ============================================================
+SECRET_PATTERNS = [
+    re.compile(r'api[_-]?key["\']?\s*[:=]\s*["\']?[a-zA-Z0-9_-]{20,}["\']?', flags=re.IGNORECASE),
+    re.compile(r'token["\']?\s*[:=]\s*["\']?[a-zA-Z0-9_-]{20,}["\']?', flags=re.IGNORECASE),
+    re.compile(r'password["\']?\s*[:=]\s*["\']?[^"\' ]+["\']?', flags=re.IGNORECASE),
+    re.compile(r'nvapi-[a-zA-Z0-9_-]+', flags=re.IGNORECASE),
+    re.compile(r'sk-[a-zA-Z0-9]+', flags=re.IGNORECASE),
+]
+
 def redact_secrets(text: str) -> str:
     """Remove API keys, tokens, passwords from logs/responses."""
-    patterns = [
-        r'api[_-]?key["\']?\s*[:=]\s*["\']?[a-zA-Z0-9_-]{20,}["\']?',
-        r'token["\']?\s*[:=]\s*["\']?[a-zA-Z0-9_-]{20,}["\']?',
-        r'password["\']?\s*[:=]\s*["\']?[^"\' ]+["\']?',
-        r'nvapi-[a-zA-Z0-9_-]+',
-        r'sk-[a-zA-Z0-9]+',
-    ]
     out = text
-    for pat in patterns:
-        out = re.sub(pat, '[REDACTED]', out, flags=re.IGNORECASE)
+    for pat in SECRET_PATTERNS:
+        out = pat.sub('[REDACTED]', out)
     return out
 
 # ============================================================
