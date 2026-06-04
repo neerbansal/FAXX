@@ -147,7 +147,8 @@ def analyze_code():
         result = completion.choices[0].message.content
         return jsonify({"model": "glm-5.1", "analysis": result, "secrets_redacted": True})
     except Exception as e:
-        return jsonify({"error": str(e), "threat_level": "critical"}), 500
+        print(f"[GLM-5.1 ANALYSIS ERROR] {e}")
+        return jsonify({"error": "An internal server error occurred", "threat_level": "critical"}), 500
 
 # ---------- MINIMAX-2.7 CHAT ----------
 @app.route("/api/chat/minimax", methods=["POST"])
@@ -168,7 +169,8 @@ def chat_minimax():
         )
         return jsonify({"model": "minimax-2.7", "content": completion.choices[0].message.content})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"[MINIMAX ERROR] {e}")
+        return jsonify({"error": "An internal server error occurred"}), 500
 
 # ---------- KIMI K2.6 CHAT ----------
 @app.route("/api/chat/kimi", methods=["POST"])
@@ -201,7 +203,8 @@ def chat_kimi():
             return app.response_class(generate(), mimetype="text/event-stream")
         return jsonify(resp.json())
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"[KIMI ERROR] {e}")
+        return jsonify({"error": "An internal server error occurred"}), 500
 
 
 # ---------- SDR (Stable Diffusion) IMAGE GEN ----------
@@ -225,7 +228,8 @@ def image_sdr():
         b64 = completion.data[0].b64_json
         return jsonify({"model": "sdr", "url": f"data:image/png;base64,{b64}"})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"[SDR ERROR] {e}")
+        return jsonify({"error": "An internal server error occurred"}), 500
 
 # ---------- FLUX KLEIN 2 4b IMAGE GEN ----------
 @app.route("/api/image/fluxklein", methods=["POST"])
@@ -247,7 +251,8 @@ def image_fluxklein():
         b64 = completion.data[0].b64_json
         return jsonify({"model": "flux-klein-2-4b", "url": f"data:image/png;base64,{b64}"})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"[FLUXKLEIN ERROR] {e}")
+        return jsonify({"error": "An internal server error occurred"}), 500
 
 # ---------- YOUTUBE PROXY ----------
 @app.route("/api/youtube/stats")
@@ -267,7 +272,8 @@ def youtube_stats():
         r = requests.get(url, params=params, timeout=10)
         return jsonify(r.json())
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"[YOUTUBE ERROR] {e}")
+        return jsonify({"error": "An internal server error occurred"}), 500
 
 # ---------- CLERK WEBHOOK ----------
 @app.route("/api/clerk/webhook", methods=["POST"])
