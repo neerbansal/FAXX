@@ -190,6 +190,8 @@ function footerSecret() {
 
 // Confetti
 function confetti() {
+  const fragment = document.createDocumentFragment();
+  const elementsToAnimate = [];
   for (let i = 0; i < 60; i++) {
     const c = document.createElement('div');
     c.style.position = 'fixed';
@@ -200,8 +202,12 @@ function confetti() {
     c.style.background = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'][Math.floor(Math.random() * 5)];
     c.style.zIndex = 9999;
     c.style.pointerEvents = 'none';
-    document.body.appendChild(c);
+    fragment.appendChild(c);
     const dur = 2 + Math.random() * 3;
+    elementsToAnimate.push({ c, dur });
+  }
+  document.body.appendChild(fragment);
+  for (const { c, dur } of elementsToAnimate) {
     c.animate([
       { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
       { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
