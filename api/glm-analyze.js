@@ -75,7 +75,7 @@ export default async function handler(req, res) {
   }
 }
 
-function generateMockAnalysis(context, errorLog, code) {
+export function generateMockAnalysis(context, errorLog, code) {
   if (errorLog) {
     return `🚨 SYSTEM THREAT DETECTED\n═══════════════════════\n\n${errorLog}\n\n🔧 GLM 5.1 DIAGNOSIS:\n1. This is a runtime error in the ${context || 'frontend'} layer.\n2. Check your API proxy in /api/ — the key might be missing in Vercel env vars.\n3. Ensure CORS headers are set on all API routes.\n4. If 500 error: check Vercel Functions logs (Dashboard → Logs).\n\n📁 FILES TO CHECK:\n- api/${(context || 'generic').toLowerCase()}.js\n- js/terminal.js (line 45-60)\n- .env (ensure keys are set, NOT committed)\n\n✅ ACTION:\nRun "/status" in terminal to verify all API connections.`;
   }
