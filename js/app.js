@@ -298,11 +298,15 @@ function drawChart() {
   const bw = (w - pad * 2) / data.length;
 
   ctx.clearRect(0, 0, w, h);
-  const bg = getComputedStyle(document.body).getPropertyValue('--bg').trim();
+  const computedStyle = getComputedStyle(document.body);
+  const bg = computedStyle.getPropertyValue('--bg').trim();
+  const fg = computedStyle.getPropertyValue('--fg').trim();
+  const border = computedStyle.getPropertyValue('--border').trim();
+
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, w, h);
 
-  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--border').trim();
+  ctx.strokeStyle = border;
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = pad + (h - pad * 2) * (i / 4);
@@ -313,14 +317,14 @@ function drawChart() {
     const bh = (val / max) * (h - pad * 2);
     const x = pad + i * bw + bw * 0.2;
     const y = h - pad - bh;
-    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--fg').trim();
+    ctx.fillStyle = fg;
     ctx.fillRect(x, y, bw * 0.6, bh);
-    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--border').trim();
+    ctx.strokeStyle = border;
     ctx.lineWidth = 2;
     ctx.strokeRect(x, y, bw * 0.6, bh);
   });
 
-  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--fg').trim();
+  ctx.fillStyle = fg;
   ctx.font = '12px Space Mono';
   ctx.fillText('VIEWS (LAST 12 MONTHS)', pad, pad - 10);
 }
