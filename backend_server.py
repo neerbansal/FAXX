@@ -197,7 +197,7 @@ def chat_kimi():
             def generate():
                 for line in resp.iter_lines():
                     if line:
-                        yield line.decode("utf-8") + "\n"
+                        yield line.decode("utf-8") + "\n\n"
             return app.response_class(generate(), mimetype="text/event-stream")
         return jsonify(resp.json())
     except Exception as e:
