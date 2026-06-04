@@ -28,3 +28,5 @@ npm-debug.log*
 
 # Assets (if you don't want logo in repo)
 # assets/logo.png
+venv/
+__pycache__/
