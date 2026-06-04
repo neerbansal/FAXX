@@ -70,10 +70,7 @@ const COMMANDS = {
     exec: async () => {
       addTermLine('🔍 SCANNING ALL API ENDPOINTS...', 'warn');
       const providers = ['kimi', 'minimax', 'sd35', 'flux', 'klein', 'deepseek', 'nvidia', 'youtube', 'clerk'];
-      for (const p of providers) {
-        await fetchCredits(p, true);
-        await sleep(300);
-      }
+      await Promise.all(providers.map(p => fetchCredits(p, true)));
       addTermLine('✅ SCAN COMPLETE.', 'success');
     }
   },
