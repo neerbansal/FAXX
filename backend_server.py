@@ -22,6 +22,7 @@ GitHub / Render / Railway / Heroku compatible.
 import os
 import re
 import sys
+from functools import lru_cache
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -260,6 +261,18 @@ def image_fluxklein():
         return jsonify({"error": "An internal server error occurred"}), 500
 
 # ---------- YOUTUBE PROXY ----------
+@lru_cache(maxsize=128)
+def _fetch_youtube_stats(channel_id):
+    url = "https://www.googleapis.com/youtube/v3/channels"
+    params = {
+        "part": "statistics,snippet",
+        "id": channel_id,
+        "key": YOUTUBE_API_KEY
+    }
+    r = requests.get(url, params=params, timeout=10)
+    r.raise_for_status()
+    return r.json()
+
 @app.route("/api/youtube/stats")
 def youtube_stats():
     channel_id = request.args.get("channel_id")
@@ -267,15 +280,10 @@ def youtube_stats():
         return jsonify({"error": "channel_id required"}), 400
     if not YOUTUBE_API_KEY:
         return jsonify({"error": "YOUTUBE_API_KEY not configured"}), 503
-    url = "https://www.googleapis.com/youtube/v3/channels"
-    params = {
-        "part": "statistics,snippet",
-        "id": channel_id,
-        "key": YOUTUBE_API_KEY
-    }
+
     try:
-        r = requests.get(url, params=params, timeout=10)
-        return jsonify(r.json())
+        data = _fetch_youtube_stats(channel_id)
+        return jsonify(data)
     except Exception as e:
         print(f"[YOUTUBE ERROR] {e}")
         return jsonify({"error": "An internal server error occurred"}), 500
