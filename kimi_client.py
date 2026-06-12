@@ -1,5 +1,6 @@
 import requests
 import base64
+import os
 
 invoke_url = "https://integrate.api.nvidia.com/v1/chat/completions"
 stream = False
@@ -9,7 +10,7 @@ def read_b64(path):
         return base64.b64encode(f.read()).decode()
 
 headers = {
-    "Authorization": "Bearer KIMI_MAX8",
+    "Authorization": f"Bearer {os.environ.get('KIMI_API_KEY', '')}",
     "Accept": "text/event-stream" if stream else "application/json"
 }
 
