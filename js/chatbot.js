@@ -11,6 +11,8 @@ const CHAT_MODELS = [
   { id: 'minimax', name: 'MiniMax 2.7', tag: 'MINIMAX 2.7', desc: 'Speech + text. Great for agents.', region: '🇨🇳' }
 ];
 
+const CHAT_MODELS_MAP = Object.fromEntries(CHAT_MODELS.map(m => [m.id, m]));
+
 let activeModel = CHAT_MODELS[0];
 
 function initChatbot() {
@@ -34,7 +36,7 @@ function renderModelTags() {
 }
 
 function switchChatModel(id) {
-  const model = CHAT_MODELS.find(m => m.id === id);
+  const model = CHAT_MODELS_MAP[id];
   if (!model) return;
   activeModel = model;
   renderModelTags();
